@@ -34,6 +34,27 @@ async def get_current_user(
     return user
 
 
+async def get_optional_user(
+    creds: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+    db: AsyncSession = Depends(get_db),
+) -> User | None:
+    """
+    Optional auth for demo flows.
+    - If a valid bearer token is present: returns the user.
+    - If missing/invalid: returns None (callers may fall back to a demo user).
+    """
+    if not creds or creds.scheme.lower() != "bearer":
+        return None
+    try:
+        claims = decode_token(creds.credentials)
+    except JWTError:
+        return None
+    email = claims.get("sub")
+    if not email:
+        return None
+    return await db.scalar(select(User).where(User.email == email))
+
+
 def require_role(*roles: str):
     async def _guard(user: User = Depends(get_current_user)) -> User:
         if user.role not in roles:

@@ -16,6 +16,23 @@ services:
       timeout: 5s
       retries: 10
 
+  # Demo API on http://localhost:8000 (Postgres + same image as CI HTTP checks)
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: safenest-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://safenest:safenest@postgres:5432/safenest
+      PYTHONPATH: /app
+      ENABLE_OLLAMA: "0"
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   safenest_pgdata:
 

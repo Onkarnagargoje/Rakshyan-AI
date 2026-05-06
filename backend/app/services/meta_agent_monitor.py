@@ -22,10 +22,14 @@ def _is_valid_output(o: Dict[str, Any]) -> bool:
 
 def _conflict_pairs(agent_outputs: Dict[str, Dict[str, Any]]) -> List[str]:
     names = list(agent_outputs.keys())
+    # Some agents are informational/auxiliary and should not be treated as "risk conflicts".
+    exclude = {"education", "evidence_log", "regional_language", "wearable_signal"}
     out: List[str] = []
     for i in range(len(names)):
         for j in range(i + 1, len(names)):
             a, b = names[i], names[j]
+            if a in exclude or b in exclude:
+                continue
             oa, ob = agent_outputs[a], agent_outputs[b]
             if not _is_valid_output(oa) or not _is_valid_output(ob):
                 continue

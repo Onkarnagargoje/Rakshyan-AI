@@ -11,9 +11,16 @@ async def run(supervisor_result: dict | None = None, **_) -> AgentOutput:
     actions = supervisor_result.get("recommended_actions", [])
 
     reason = "Generated privacy-safe summary for parent dashboard."
+    if level in {"high", "critical"}:
+        high_level = "Potential safety concern detected."
+    elif level == "medium":
+        high_level = "Elevated risk — parent review recommended."
+    else:
+        high_level = "No significant safety concerns detected."
+
     summary = {
         "risk_level": level,
-        "high_level": "Potential safety concern detected." if level in {"high", "critical"} else "No significant safety concerns detected.",
+        "high_level": high_level,
         "contributors": contributors,
         "recommended_actions": actions,
         "note": "Raw chat is not shown to parents by design.",

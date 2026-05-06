@@ -1,3 +1,4 @@
+import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
 
@@ -28,4 +29,10 @@ def create_access_token(subject: str, *, extra: Optional[Dict[str, Any]] = None)
 
 def decode_token(token: str) -> Dict[str, Any]:
     return jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
+
+
+def hash_ingest_token(plain_token: str) -> str:
+    """Deterministic hash for child-device ingest tokens (not reversible)."""
+    base = f"ingest:{settings.jwt_secret}:{plain_token}"
+    return hashlib.sha256(base.encode("utf-8")).hexdigest()
 

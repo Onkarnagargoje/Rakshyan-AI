@@ -1,0 +1,17 @@
+# Local secrets (copy from backend/.env.example)
+backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+backend/.venv/
+
+# SQLite / local DB
+*.db
+*.db-journal
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store

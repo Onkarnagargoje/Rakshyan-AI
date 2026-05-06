@@ -9,6 +9,8 @@ class ChatAnalysis(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    child_id: Mapped[int | None] = mapped_column(ForeignKey("child_profiles.id", ondelete="SET NULL"), nullable=True, index=True)
+    device_id: Mapped[int | None] = mapped_column(ForeignKey("child_devices.id", ondelete="SET NULL"), nullable=True, index=True)
 
     platform: Mapped[str] = mapped_column(String(64), default="simulated")
     language_hint: Mapped[str] = mapped_column(String(64), default="auto")
